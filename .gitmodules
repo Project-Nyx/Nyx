@@ -1,0 +1,4 @@
+[submodule "javadoc"]
+	path = src/main/javadoc
+	url = https://github.com/Project-Nyx/Nyx.git
+	branch = gh-pages
