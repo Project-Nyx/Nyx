@@ -27,7 +27,7 @@ import org.projectnyx.network.mcpe.raknet.RawDataPacket;
 
 @RequiredArgsConstructor
 public class SentDataPacketGroup extends SentPacket implements Cloneable {
-    private final byte pid;
+    private final byte id;
     public int seqNumber;
     public long lastSendNanos;
     @Getter private final List<RawDataPacket> packets = new ArrayList<>();
@@ -49,8 +49,8 @@ public class SentDataPacketGroup extends SentPacket implements Cloneable {
     }
 
     @Override
-    public byte pid() {
-        return pid;
+    public byte getId() {
+        return id;
     }
 
     @Override

@@ -30,7 +30,7 @@ public abstract class ReceivedPacket extends ByteBufferReader implements Cloneab
         decode();
     }
 
-    public abstract byte pid();
+    public abstract byte getId();
 
     protected abstract void decode();
 

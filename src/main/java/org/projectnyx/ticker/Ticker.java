@@ -72,6 +72,8 @@ public class Ticker {
     }
 
     public void addTask(Task task) {
+        Nyx.getInstance().throwMainThread();
+
         taskList.add(task);
     }
 

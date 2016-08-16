@@ -25,7 +25,7 @@ public class Ping extends SentPacket {
     public long pingId;
 
     @Override
-    public byte pid() {
+    public byte getId() {
         return RakNetConsts.DATA_PING;
     }
 

@@ -81,6 +81,6 @@ public class ConsoleReader extends Thread implements CommandIssuer {
 
     @Override
     public void sendText(UIText text) {
-        Nyx.getInstance().getLog().info(text.toANSI(this));
+        Nyx.getLog().info(text.toANSI(this));
     }
 }

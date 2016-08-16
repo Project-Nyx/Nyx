@@ -14,23 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.projectnyx.network.mcpe.raknet.data;
-
-import org.projectnyx.network.mcpe.SentPacket;
-import org.projectnyx.network.mcpe.raknet.RakNetConsts;
-
-public class ClientDisconnect extends SentPacket {
-    @Override
-    public byte getId() {
-        return RakNetConsts.DATA_CLIENT_DISCONNECT;
-    }
-
-    @Override
-    protected int length() {
-        return 0;
-    }
-
-    @Override
-    protected void encode() {
-    }
-}
+/**
+ * <strong>Deprecated.</strong> Will not be implemented until the software is fairly stable.
+ */
+@Deprecated
+package org.projectnyx.network.xml;

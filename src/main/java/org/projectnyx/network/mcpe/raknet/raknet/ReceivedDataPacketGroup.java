@@ -25,14 +25,14 @@ import org.projectnyx.network.mcpe.raknet.RawDataPacket;
 
 @RequiredArgsConstructor
 public class ReceivedDataPacketGroup extends ReceivedPacket {
-    private final byte pid;
+    private final byte id;
 
     public int seqNumber;
     public List<RawDataPacket> packets = new ArrayList<>();
 
     @Override
-    public byte pid() {
-        return pid;
+    public byte getId() {
+        return id;
     }
 
     @Override

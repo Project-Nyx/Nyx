@@ -24,7 +24,7 @@ public class OpenConnectionReply1 extends SentPacket {
     public short mtuSize;
 
     @Override
-    public byte pid() {
+    public byte getId() {
         return RakNetConsts.RAKNET_OPEN_CONNECTION_REPLY_1;
     }
 

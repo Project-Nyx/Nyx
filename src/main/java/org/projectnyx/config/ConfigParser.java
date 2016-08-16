@@ -33,7 +33,8 @@ import static org.xmlpull.v1.XmlPullParser.*;
  * The class for parsing a Nyx-style XML config file.
  */
 public class ConfigParser {
-    private XmlPullParser parser;
+    private final Reader input;
+    private final XmlPullParser parser;
     @Getter @Setter private String packageContext = NyxConfig.class.getPackage().getName();
     private ConfigElement currentElement = null;
     private String currentAttribute = null;
@@ -66,7 +67,7 @@ public class ConfigParser {
     @SneakyThrows({XmlPullParserException.class})
     public ConfigParser(Reader reader) {
         parser = XmlPullParserFactory.newInstance().newPullParser();
-        parser.setInput(reader);
+        parser.setInput(input = reader);
     }
 
     /**
@@ -102,6 +103,8 @@ public class ConfigParser {
             return currentElement;
         } catch(XmlPullParserException e) {
             throw new NumberFormatException(e.getLocalizedMessage());
+        }finally{
+            input.close();
         }
     }
 

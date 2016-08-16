@@ -50,7 +50,9 @@ public abstract class Client {
     }
 
     public void tick() {
-
+        if(System.currentTimeMillis() - lastAlive > 10e+3){
+            close(CloseReason.CLIENT_TIMEOUT);
+        }
     }
 
     public InetSocketAddress getAddress() {

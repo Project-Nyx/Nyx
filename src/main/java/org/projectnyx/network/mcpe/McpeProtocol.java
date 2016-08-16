@@ -16,22 +16,15 @@
  */
 package org.projectnyx.network.mcpe;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.charset.Charset;
 import java.util.*;
-import lombok.Cleanup;
 import lombok.Getter;
-import lombok.SneakyThrows;
-
-import org.apache.commons.io.IOUtils;
 
 import org.projectnyx.Nyx;
-import org.projectnyx.config.ConfigParser;
 import org.projectnyx.network.Client;
+import org.projectnyx.network.NetworkManager;
 import org.projectnyx.network.Protocol;
 import org.projectnyx.network.QueryResponse;
 import org.projectnyx.network.ext.SessionHandler;
@@ -55,7 +48,6 @@ public class McpeProtocol extends Protocol {
     private Map<Byte, ProtocolDeclaration> protocols = new HashMap<>();
 
     @Override
-    @SneakyThrows({IOException.class})
     public void init() {
         socketsUsed = new HashSet<>();
         List<Server> servers = Nyx.getInstance().getConfig().servers.servers;
@@ -70,6 +62,7 @@ public class McpeProtocol extends Protocol {
             }
         });
 
+        /*
         ClassLoader classLoader = getClass().getClassLoader();
         @Cleanup InputStream listStream = classLoader.getResourceAsStream("protocol/mcpe/protocols.list");
         for(String line : IOUtils.readLines(listStream, Charset.defaultCharset())) {
@@ -80,7 +73,9 @@ public class McpeProtocol extends Protocol {
             ConfigParser parser = new ConfigParser(is);
                 ProtocolDeclaration protocol = (ProtocolDeclaration) parser.parse();
             protocols.put(protocol.version, protocol);
-        }
+        }*/
+
+
     }
 
     @Override
@@ -126,7 +121,7 @@ public class McpeProtocol extends Protocol {
     private void handleUnconnectedPing(UdpSessionHandler session, ByteBuffer buffer) {
         long pingId = buffer.order(ByteOrder.BIG_ENDIAN).getLong();
 
-        QueryResponse queryResponse = Nyx.getInstance().getNetwork().getQueryResponse();
+        QueryResponse queryResponse = NetworkManager.getInstance().getQueryResponse();
         String serverNameString = String.format("MCPE;%s;%d %d;%s;%d;%d",
                 queryResponse.getName(), APPARENT_PROTOCOL_MAJOR, APPARENT_PROTOCOL_MINOR, APPARENT_VERSION,
                 queryResponse.getCountPlayers(), queryResponse.getMaxPlayers());

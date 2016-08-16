@@ -41,7 +41,7 @@ public class SentAckNack extends SentPacket {
     private byte[] encoded = null;
 
     @Override
-    public byte pid() {
+    public byte getId() {
         return ack ? RakNetConsts.ACK : RakNetConsts.NACK;
     }
 

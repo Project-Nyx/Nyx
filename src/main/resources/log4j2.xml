@@ -23,7 +23,7 @@
         <!--<PatternLayout pattern="%msg%r"/>-->
         <!--</Console>-->
         <Console name="Nyx" target="SYSTEM_OUT">
-            <PatternLayout pattern="[%d{HH:mm:ss}][%level] %msg%n"/>
+            <PatternLayout pattern="[%d{HH:mm:ss}][%level][%logger] %msg%n"/>
         </Console>
     </Appenders>
     <Loggers>

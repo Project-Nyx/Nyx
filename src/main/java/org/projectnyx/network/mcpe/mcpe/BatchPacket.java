@@ -14,29 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.projectnyx.network.mcpe.raknet.raknet;
+package org.projectnyx.network.mcpe.mcpe;
 
-import java.util.Arrays;
-import lombok.Getter;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.zip.InflaterInputStream;
 
-import org.projectnyx.network.mcpe.ReceivedPacket;
-import org.projectnyx.network.mcpe.raknet.RakNetConsts;
+import lombok.SneakyThrows;
 
-public class OpenConnectionRequest1 extends ReceivedPacket {
-    @Getter private byte protocol;
-    @Getter private int mtuSize;
+import org.apache.commons.io.IOUtils;
+
+public class BatchPacket extends DataPacket {
+    public byte[] data;
 
     @Override
-    public byte getId() {
-        return RakNetConsts.RAKNET_OPEN_CONNECTION_REQUEST_1;
+    public byte getPacketId() {
+        return McpeConsts.BatchPacket;
     }
 
     @Override
-    protected void decode() {
-        if(!Arrays.equals(getBytes(16), RakNetConsts.MAGIC)) {
-            return; // TODO disconnect
-        }
-        protocol = getByte();
-        mtuSize = getBuffer().limit();
+    @SneakyThrows({IOException.class})
+    public void read() {
+        byte[] deflated = readBytes(readInt());
+        data = IOUtils.toByteArray(new InflaterInputStream(new ByteArrayInputStream(data)));
     }
 }

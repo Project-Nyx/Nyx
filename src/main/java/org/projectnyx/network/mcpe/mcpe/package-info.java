@@ -14,13 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+ * <p>This package uses references from <a href="https://github.com/PocketMine/PocketMine-MP">PocketMine-MP</a>.</p>
+ */
 package org.projectnyx.network.mcpe.mcpe;
-
-import org.projectnyx.network.xml.AbstractPacketStructure;
-
-public class LoginPacketSpecial implements AbstractPacketStructure {
-    @Override
-    public void parse() {
-        // TODO
-    }
-}

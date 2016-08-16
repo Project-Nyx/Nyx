@@ -47,4 +47,8 @@ public class SharedSocketPool {
     void removeSocket(SharedServerSocket socket) {
         sockets.remove(socket.getIdentifier(), socket);
     }
+
+    public void tick() {
+        sockets.values().forEach(SharedServerSocket::tick);
+    }
 }

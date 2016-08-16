@@ -30,7 +30,7 @@ public class ServerHandshake extends SentPacket {
     public long pong;
 
     @Override
-    public byte pid() {
+    public byte getId() {
         return RakNetConsts.RAKNET_CONNECTION_REQUEST_ACCEPTED;
     }
 

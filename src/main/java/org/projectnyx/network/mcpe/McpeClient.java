@@ -29,6 +29,8 @@ import org.projectnyx.network.Client;
 import org.projectnyx.network.Protocol;
 import org.projectnyx.network.ext.SessionHandler;
 import org.projectnyx.network.ext.udp.UdpSessionHandler;
+import org.projectnyx.network.mcpe.mcpe.DataPacket;
+import org.projectnyx.network.mcpe.mcpe.McpeDataPacketManager;
 import org.projectnyx.network.mcpe.raknet.RakNetInterface;
 import org.projectnyx.network.mcpe.raknet.RawDataPacket;
 import org.projectnyx.network.mcpe.raknet.data.ClientDisconnect;
@@ -62,7 +64,7 @@ public class McpeClient extends Client {
         ReceivedPacket packet = RakNetPacketManager.getInstance().parsePacket(buffer);
         if(packet == null) {
             buffer.position(0);
-            Nyx.getInstance().getLog().error(String.format("Cannot handle MCPE packet from client %s - %s",
+            Nyx.getLog().error(String.format("Cannot handle MCPE packet from client %s - %s",
                     session.getAddress(), Hex.encodeHexString(buffer.array())));
             return;
         }
@@ -72,6 +74,13 @@ public class McpeClient extends Client {
 
     public void handleDataPacket(ByteBuffer buffer) {
         byte pid = buffer.get();
+        DataPacket packet = McpeDataPacketManager.getInstance().get(pid, buffer);
+        if(packet == null) {
+            Nyx.getLog().warn(String.format("Client %s sent unknown packet with pid 0x%x", getAddress(), pid));
+            return;
+        }
+
+
     }
 
     @Override
@@ -94,12 +103,12 @@ public class McpeClient extends Client {
     }
 
     public void unexpectedPacket(ReceivedPacket packet) {
-        Nyx.getInstance().getLog().debug(String.format("Unexpected packet from client %s at stage %d - %s",
+        Nyx.getLog().debug(String.format("Unexpected packet from client %s at stage %d - %s",
                 session.getAddress(), loginStep, packet.getClass().getSimpleName()));
     }
 
     public void unexpectedPacket(RawDataPacket packet) {
-        Nyx.getInstance().getLog().error(String.format("Unexpected data packet from client %s at stage %d - 0x%x",
+        Nyx.getLog().error(String.format("Unexpected data packet from client %s at stage %d - 0x%x",
                 session.getAddress(), loginStep, packet.buffer[0]));
     }
 }

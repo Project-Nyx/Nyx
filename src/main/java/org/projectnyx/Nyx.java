@@ -52,6 +52,10 @@ public class Nyx {
     @Getter private static Nyx instance = null;
 
     /**
+     * <p>The server's main thread</p>
+     */
+    @Getter private final Thread mainThread;
+    /**
      * <p>The directory where JAR module files are loaded</p>
      * <p>Can be specified from command line using the <code>-m</code> (<code>--module-path</code>) option.</p>
      */
@@ -66,7 +70,7 @@ public class Nyx {
     /**
      * <p>The {@link Logger log4j2 logger} for this server</p>
      */
-    @Getter private final Logger log = LogManager.getLogger(getClass());
+    @Getter(lazy = true) private final static Logger log = LogManager.getLogger(Nyx.class);
     /**
      * <p>The loaded {@code nyx.xml} config file</p>
      */
@@ -106,10 +110,11 @@ public class Nyx {
             throw new IllegalStateException("An instance of Nyx already exists");
         }
         instance = this;
+        mainThread = Thread.currentThread();
 
         this.modulePath = modulePath;
         this.dataPath = dataPath;
-        log.info("Loading configuration...");
+        getLog().info("Loading configuration...");
         config = loadConfig();
 
         network = new NetworkManager();
@@ -118,13 +123,14 @@ public class Nyx {
         commandManager = new CommandManager();
         console = new ConsoleReader();
 
-        log.info("Loading modules...");
+        getLog().info("Loading modules...");
         loadBuiltinModules();
         loadJarModules();
 
+        network.start();
         console.start();
 
-        log.info(String.format("Server started (%s s)", (System.currentTimeMillis() - serverStartTime) / 1000d));
+        getLog().info(String.format("Server started (%s s)", (System.currentTimeMillis() - serverStartTime) / 1000d));
         ticker.startTicking();
     }
 
@@ -152,13 +158,13 @@ public class Nyx {
             String moduleType = args[0].trim();
             if(moduleManagers.containsKey(moduleType)) {
                 try {
-                    log.info(String.format("Loading builtin %s module: %s", moduleType, args[1]));
+                    getLog().info(String.format("Loading builtin %s module: %s", moduleType, args[1]));
                     moduleManagers.get(moduleType).loadForClass(args[1].trim(), args[2].trim());
                 } catch(Exception e) {
-                    log.error("Cannot load builtin module", e);
+                    getLog().error("Cannot load builtin module", e);
                 }
             } else {
-                log.error("Unknown module type: " + moduleType);
+                getLog().error("Unknown module type: " + moduleType);
             }
         });
     }
@@ -177,13 +183,13 @@ public class Nyx {
             String moduleType = props.getProperty("type");
             if(moduleManagers.containsKey(moduleType)) {
                 try {
-                    log.info(String.format("Loading %s module from jar: %s", moduleType, props.getProperty("name")));
+                    getLog().info(String.format("Loading %s module from jar: %s", moduleType, props.getProperty("name")));
                     moduleManagers.get(moduleType).loadForClass(props.getProperty("name"), props.getProperty("mainClass"));
                 } catch(Exception e) {
-                    log.error("Cannot load jar module", e);
+                    getLog().error("Cannot load jar module", e);
                 }
             } else {
-                log.error("Jar module " + file.getName() + " declares an unknown module type: " + moduleType);
+                getLog().error("Jar module " + file.getName() + " declares an unknown module type: " + moduleType);
             }
         }
     }
@@ -206,5 +212,11 @@ public class Nyx {
      */
     public void shutdown() {
         ticker.stopTicking();
+    }
+
+    public void throwMainThread() {
+        if(Thread.currentThread() != mainThread){
+            throw new IllegalStateException("Only run in main thread");
+        }
     }
 }

@@ -46,7 +46,7 @@ public class PacketWithAddress {
     public PacketWithAddress(ByteBuffer buffer, InetSocketAddress address, boolean flip) {
         if(flip) {
             if(buffer.position() == 0) {
-                Nyx.getInstance().getLog().warn("Attempt to flip buffer with zero length", new Throwable("Backtrace"));
+                Nyx.getLog().warn("Attempt to flip buffer with zero length", new Throwable("Backtrace"));
             }
             if(buffer.array().length >= (buffer.position() << 3)) { // save some memory
                 buffer = ByteBuffer.wrap(ArrayUtils.subarray(buffer.array(), 0, buffer.position()));

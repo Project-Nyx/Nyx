@@ -70,9 +70,9 @@ public class RakNetInterface {
             for(Integer seqNumber : ((ReceivedNack) packet).getSeqNumbers()) {
                 SentDataPacketGroup resend = nackRecovery.remove(seqNumber);
                 if(resend == null) {
-                    Nyx.getInstance().getLog().debug(String.format("Client %s sent NACK %s for seqNumber %d. Buffer: %s",
+                    Nyx.getLog().debug(String.format("Client %s sent NACK %s for unknown seqNumber %d. Buffer: %s",
                             client.getAddress(), packet, seqNumber, Hex.encodeHexString(packet.getBuffer().array())));
-                    return;
+                    continue;
                 }
                 resend.seqNumber = getNextSeqNumber();
                 queueNackReply(resend);
@@ -126,7 +126,7 @@ public class RakNetInterface {
             long pingId = buffer.getLong();
             Ping ping = pingMap.remove(pingId);
             if(ping == null) {
-                Nyx.getInstance().getLog().error(String.format("Client from %s sent PONG with unknown ping ID %d",
+                Nyx.getLog().error(String.format("Client from %s sent PONG with unknown ping ID %d",
                         client.getAddress(), pingId));
                 return;
             }
@@ -162,7 +162,7 @@ public class RakNetInterface {
             // TODO log referrer?
             // TODO check port?
             client.setLoginStep(LOGIN_STEP_IN_GAME);
-            Nyx.getInstance().getLog().debug(String.format("Client %s is now logging in!", client.getAddress()));
+            Nyx.getLog().debug(String.format("Client %s is now logging in!", client.getAddress()));
         } else if(client.getLoginStep() != LOGIN_STEP_IN_GAME) {
             client.unexpectedPacket(packet);
         } else {
@@ -180,7 +180,7 @@ public class RakNetInterface {
     }
 
     public void queueDataPacket(RawDataPacket packet) {
-        Nyx.getInstance().getLog().debug(String.format("Sending data packet 0x%x to %s: %s", packet.buffer[0], client.getAddress(), Hex.encodeHexString(packet.buffer)));
+        Nyx.getLog().debug(String.format("Sending data packet 0x%x to %s: %s", packet.buffer[0], client.getAddress(), Hex.encodeHexString(packet.buffer)));
         sendQueue.add(packet);
     }
 

@@ -26,13 +26,13 @@ public abstract class SentPacket {
 
     public ByteBuffer write() {
         buffer = ByteBuffer.allocate(length() + 1);
-        buffer.put(pid());
+        buffer.put(getId());
         encode();
         buffer.flip();
         return buffer;
     }
 
-    public abstract byte pid();
+    public abstract byte getId();
 
     /**
      * Returns the length of this packet excluding the packet ID

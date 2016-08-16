@@ -48,7 +48,7 @@ public class RakNetPacketManager {
 
     public void registerPacket(Class<? extends ReceivedPacket> clazz) throws IllegalAccessException, InstantiationException {
         ReceivedPacket pk = clazz.newInstance();
-        registerPacket(pk.pid(), pk);
+        registerPacket(pk.getId(), pk);
     }
 
     public void registerPacket(byte pid, ReceivedPacket packet) {

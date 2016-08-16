@@ -20,7 +20,7 @@ import org.projectnyx.network.mcpe.raknet.RakNetConsts;
 
 public class ReceivedNack extends ReceivedAckNack {
     @Override
-    public byte pid() {
+    public byte getId() {
         return RakNetConsts.NACK;
     }
 }

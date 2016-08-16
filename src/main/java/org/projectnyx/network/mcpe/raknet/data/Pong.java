@@ -23,7 +23,7 @@ public class Pong extends SentPacket {
     public long pingId;
 
     @Override
-    public byte pid() {
+    public byte getId() {
         return RakNetConsts.DATA_PONG;
     }
 

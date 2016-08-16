@@ -29,7 +29,7 @@ public class OpenConnectionRequest2 extends ReceivedPacket {
     @Getter private long clientId;
 
     @Override
-    public byte pid() {
+    public byte getId() {
         return RakNetConsts.RAKNET_OPEN_CONNECTION_REQUEST_2;
     }
 

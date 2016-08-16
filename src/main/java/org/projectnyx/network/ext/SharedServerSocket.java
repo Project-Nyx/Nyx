@@ -39,6 +39,9 @@ public abstract class SharedServerSocket {
         SharedSocketPool.getInstance().removeSocket(this);
     }
 
+    public void tick() {
+    }
+
     @Value
     public static class Identifier {
         String type;

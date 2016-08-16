@@ -25,16 +25,29 @@ import org.projectnyx.network.ext.SessionHandler;
 import org.projectnyx.network.ext.SharedSocketPool;
 
 public class NetworkManager extends ModuleManager<Protocol> {
+    @Getter private static NetworkManager instance;
+
     @Getter @Setter @NotNull private QueryResponse queryResponse;
     private final SharedSocketPool sockets = new SharedSocketPool();
 
+    private boolean running = true;
+
     public NetworkManager() {
         super(Protocol.class);
+        instance = this;
 
         queryResponse = new QueryResponse();
         queryResponse.setName("Nyx rised.");
         queryResponse.setCountPlayers(1);
         queryResponse.setMaxPlayers(10);
+    }
+
+    public void start() {
+        new Thread(() -> {
+            while(running) {
+                sockets.tick();
+            }
+        }).start();
     }
 
     @Override
@@ -56,5 +69,9 @@ public class NetworkManager extends ModuleManager<Protocol> {
             }
         }
         return null;
+    }
+
+    public void stop() {
+        running = false;
     }
 }

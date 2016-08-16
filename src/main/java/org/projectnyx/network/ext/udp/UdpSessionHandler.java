@@ -22,6 +22,7 @@ import lombok.Getter;
 
 import org.projectnyx.Nyx;
 import org.projectnyx.network.Client;
+import org.projectnyx.network.NetworkManager;
 import org.projectnyx.network.Protocol;
 import org.projectnyx.network.ext.PacketWithAddress;
 import org.projectnyx.network.ext.SessionHandler;
@@ -38,15 +39,17 @@ public class UdpSessionHandler extends SessionHandler {
     @Override
     public void onReceive(PacketWithAddress pk) {
         if(protocol == null) {
+            Nyx.getLog().debug(String.format("Handling packet from %s", pk.getAddress()));
             initStack.add(pk.getBuffer());
-            Client client = Nyx.getInstance().getNetwork().adoptSession(this);
+            Client client = NetworkManager.getInstance().adoptSession(this);
             if(client != null) {
                 protocol = client.getSourceProtocol();
                 this.client = client;
                 initStack = null;
-                Nyx.getInstance().getLog().debug(String.format("Client %s is adopted by %s", getAddress(), protocol.getName()));
+                Nyx.getLog().debug(String.format("Client %s is adopted by %s", getAddress(), protocol.getName()));
             }
         } else {
+            Nyx.getLog().debug(String.format("Handling packet from %s", pk.getAddress()));
             client.handlePacket(pk.getBuffer());
         }
     }

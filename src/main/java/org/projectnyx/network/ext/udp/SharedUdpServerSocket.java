@@ -19,6 +19,8 @@ package org.projectnyx.network.ext.udp;
 import java.net.InetSocketAddress;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 
@@ -33,24 +35,32 @@ public class SharedUdpServerSocket extends SharedServerSocket {
 
     private Task task;
     private Map<InetSocketAddress, UdpSessionHandler> sessions = new HashMap<>();
+    private List<UdpSessionHandler> sessionsToClose = new LinkedList<>();
 
     public SharedUdpServerSocket(InetSocketAddress address) {
         super(TYPE, address.getAddress(), address.getPort());
-        task = new Task(1, Task.RUN_INFINITY, this::tick);
-        task.addSelf();
         thread = new UdpBufferThread(this, address);
         thread.start();
-        Nyx.getInstance().getLog().info(String.format("Started UDP server socket listening on %s", address.toString()));
+        Nyx.getLog().info(String.format("Started UDP server socket listening on %s", address.toString()));
     }
 
-    private void tick() {
+    @Override
+    public void tick() {
+        super.tick();
+
         PacketWithAddress pk;
         while((pk = thread.shiftReceive()) != null) {
             UdpSessionHandler session = getSessionOrCreate(pk.getAddress());
+            Nyx.getLog().debug(String.format("Received packet from %s", pk.getAddress()));
             session.onReceive(pk);
+            Nyx.getLog().debug(String.format("Handled packet from %s", pk.getAddress()));
         }
 
         sessions.values().forEach(UdpSessionHandler::tick);
+        for(UdpSessionHandler handler : sessionsToClose) {
+            sessions.values().remove(handler);
+        }
+        sessionsToClose.clear();
     }
 
     public UdpSessionHandler getSession(InetSocketAddress address) {
@@ -72,7 +82,7 @@ public class SharedUdpServerSocket extends SharedServerSocket {
         if(handler.getSocket() != this) {
             throw new IllegalArgumentException();
         }
-        sessions.remove(handler.getAddress());
+        sessionsToClose.add(handler);
     }
 
     public Collection<UdpSessionHandler> getSessions() {
@@ -82,6 +92,5 @@ public class SharedUdpServerSocket extends SharedServerSocket {
     @Override
     public void close() {
         super.close();
-        task.removeTask();
     }
 }
